@@ -12,7 +12,7 @@ type printer struct {
 }
 
 // NewPrinter wraps an io.Writer, exposing Print, Printf, and Println methods.
-func NewPrinter(writer io.Writer) *printer {
+func NewPrinter(writer io.Writer) Printer {
 	return &printer{writer: writer}
 }
 
@@ -28,27 +28,27 @@ func (this *printer) Print(args ...any) (int, error) {
 
 type buffer struct {
 	*bytes.Buffer
-	*printer
+	Printer
 }
 
 // NewBuffer is a near drop-in replacement for bytes.NewBuffer(), and exposes the result as a printer.
-func NewBuffer(content []byte) *buffer {
+func NewBuffer(content []byte) Buffer {
 	b := bytes.NewBuffer(content)
-	return &buffer{Buffer: b, printer: NewPrinter(b)}
+	return &buffer{Buffer: b, Printer: NewPrinter(b)}
 }
 
 // NewBufferString is a near drop-in replacement for bytes.NewBufferString(), and exposes the result as a printer.
-func NewBufferString(content string) *buffer {
+func NewBufferString(content string) Buffer {
 	return NewBuffer([]byte(content))
 }
 
 type builder struct {
 	*strings.Builder
-	*printer
+	Printer
 }
 
 // NewBuilder is a near drop-in replacement for new(strings.Builder) and exposes the result as a printer.
-func NewBuilder() *builder {
+func NewBuilder() Builder {
 	b := new(strings.Builder)
-	return &builder{Builder: b, printer: NewPrinter(b)}
+	return &builder{Builder: b, Printer: NewPrinter(b)}
 }
